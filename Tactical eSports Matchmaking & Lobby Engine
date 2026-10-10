@@ -1,0 +1,107 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Player {
+    string name;
+    int skill;
+    Player* next;
+};
+
+Player *front = NULL, *rear = NULL;
+
+void registerPlayer() {
+    Player* p = new Player;
+
+    cout << "Enter player name: ";
+    cin >> p->name;
+    cout << "Enter skill level (1-10): ";
+    cin >> p->skill;
+
+    if (p->skill < 1 || p->skill > 10) {
+        cout << "Invalid skill level!\n";
+        delete p;
+        return;
+    }
+
+    p->next = NULL;
+
+    if (rear == NULL)
+        front = rear = p;
+    else {
+        rear->next = p;
+        rear = p;
+    }
+
+    cout << "Player registered successfully!\n";
+}
+
+void findMatch() {
+    Player *p = front, *prev = NULL;
+    int count = 0, skill = -1;
+
+    while (p != NULL) {
+        if (skill == -1) skill = p->skill;
+
+        if (p->skill == skill) {
+            cout << p->name << " matched!\n";
+            count++;
+
+            if (prev == NULL) front = p->next;
+            else prev->next = p->next;
+
+            Player* temp = p;
+            p = p->next;
+            if (temp == rear) rear = prev;
+            delete temp;
+
+            if (count == 5) break;
+        } else {
+            prev = p;
+            p = p->next;
+        }
+    }
+
+    if (count == 5)
+        cout << "Lobby created successfully!\n";
+    else
+        cout << "Not enough players with the same skill!\n";
+}
+
+void display() {
+    Player* p = front;
+
+    if (p == NULL) {
+        cout << "Waiting queue is empty.\n";
+        return;
+    }
+
+    while (p != NULL) {
+        cout << p->name << " (Skill " << p->skill << ")\n";
+        p = p->next;
+    }
+}
+
+int main() {
+    int choice;
+
+    do {
+        cout << "\n--- TACTICAL ESPORTS ENGINE ---\n";
+        cout << "1. Register Player\n";
+        cout << "2. Find Match\n";
+        cout << "3. Display Waiting Players\n";
+        cout << "4. Exit\n";
+        cout << "Enter choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1: registerPlayer(); break;
+            case 2: findMatch(); break;
+            case 3: display(); break;
+            case 4: cout << "Thank you!\n"; break;
+            default: cout << "Invalid choice!\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
