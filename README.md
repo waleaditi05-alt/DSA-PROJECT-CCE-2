@@ -1,4 +1,4 @@
-Tactical eSports Matchmaking & Lobby Engine
+Develop an Tactical eSports Matchmaking & Lobby Engine
 
 Problem Statement
 
