@@ -10,7 +10,6 @@ To develop a system for matching suitable players, forming teams, and managing g
 
 Data Structure Used
 
-- Queue
 - Linked List 
 
 Operations
