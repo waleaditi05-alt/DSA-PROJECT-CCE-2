@@ -2,23 +2,25 @@
 #include <string>
 using namespace std;
 
-const int N = 5;
 const int S = 7;
+const int MAX = 50;
 
 string sub[S] = {"MSS", "DS", "DC", "ELM", "BA", "PMF", "CEP"};
 
 struct Student {
     string name;
     int roll, marks[S];
-} st[N];
+} st[MAX];
 
 struct Node {
-    int idx;
-    int marks;
+    int idx, marks;
     Node *left, *right;
-    bool lt, rt; // true means thread; false means child link
+    bool lt, rt;
 };
 
+int total = 0;
+
+// Insert node into Double-Threaded BST
 Node* insert(Node* root, int i, int m) {
     Node* p = root;
     Node* par = NULL;
@@ -49,8 +51,8 @@ Node* insert(Node* root, int i, int m) {
         par->lt = false;
         par->left = t;
     } else {
-        t->right = par->right;
         t->left = par;
+        t->right = par->right;
         par->rt = false;
         par->right = t;
     }
@@ -58,92 +60,179 @@ Node* insert(Node* root, int i, int m) {
     return root;
 }
 
-// Reverse inorder traversal using threads: descending marks.
+// Display marks in descending order using left threads
 void displayDescending(Node* root) {
-    Node* p = root;
-
-    if (p == NULL) {
-        cout << "No records available.\\n";
+    if (root == NULL) {
+        cout << "No records available!\n";
         return;
     }
 
-    // Find the rightmost node, which has the highest marks.
+    Node* p = root;
+
+    // Start from the highest marks
     while (!p->rt)
         p = p->right;
 
-    cout << "Roll\\tName\\t\\tMarks\\n";
-    cout << "--------------------------------\\n";
+    cout << "\nRoll No.\tName\t\tMarks\n";
+    cout << "--------------------------------------\n";
 
     while (p != NULL) {
-        cout << st[p->idx].roll << "\\t"
-             << st[p->idx].name << "\\t\\t"
-             << p->marks << "\\n";
+        cout << st[p->idx].roll << "\t\t"
+             << st[p->idx].name << "\t\t"
+             << p->marks << "\n";
 
-        // Left thread points to the inorder predecessor.
         if (p->lt) {
             p = p->left;
         } else {
-            // Move into the left subtree, then find its rightmost node.
             p = p->left;
+
             while (p != NULL && !p->rt)
                 p = p->right;
         }
     }
 }
 
-void showSubject(int s) {
-    Node* root = NULL;
+void deleteTree(Node* root) {
+    if (root == NULL)
+        return;
 
-    for (int i = 0; i < N; i++)
-        root = insert(root, i, st[i].marks[s]);
+    if (!root->lt)
+        deleteTree(root->left);
 
-    cout << "\\n" << sub[s] << " Marks in Descending Order\\n";
-    displayDescending(root);
+    if (!root->rt)
+        deleteTree(root->right);
+
+    delete root;
 }
 
-int main() {
-    cout << "STUDENT MARKS MANAGEMENT SYSTEM\\n";
-    cout << "Using Double-Threaded Binary Search Tree\\n";
+// Enter a new student record
+void addStudent() {
+    if (total == MAX) {
+        cout << "Student limit reached!\n";
+        return;
+    }
 
-    for (int i = 0; i < N; i++) {
-        cout << "\\nStudent " << i + 1 << "\\nName: ";
-        getline(cin >> ws, st[i].name);
+    int roll;
 
-        cout << "Roll number: ";
-        cin >> st[i].roll;
+    cout << "Enter Roll Number: ";
+    cin >> roll;
 
-        for (int j = 0; j < S; j++) {
-            cout << sub[j] << " marks (0-100): ";
-            cin >> st[i].marks[j];
+    if (roll <= 0) {
+        cout << "Roll number must be positive!\n";
+        return;
+    }
 
-            while (st[i].marks[j] < 0 || st[i].marks[j] > 100) {
-                cout << "Enter valid marks (0-100): ";
-                cin >> st[i].marks[j];
-            }
+    for (int i = 0; i < total; i++) {
+        if (st[i].roll == roll) {
+            cout << "Roll number already exists!\n";
+            return;
         }
     }
 
+    cout << "Enter Student Name: ";
+    getline(cin >> ws, st[total].name);
+
+    st[total].roll = roll;
+
+    for (int j = 0; j < S; j++) {
+        cout << "Enter " << sub[j] << " Marks (0-100): ";
+        cin >> st[total].marks[j];
+
+        while (st[total].marks[j] < 0 ||
+               st[total].marks[j] > 100) {
+            cout << "Invalid marks! Enter again: ";
+            cin >> st[total].marks[j];
+        }
+    }
+
+    total++;
+    cout << "Student record added successfully!\n";
+}
+
+// Display one subject for all students
+void showSubject(int s) {
+    if (total == 0) {
+        cout << "Please add student records first!\n";
+        return;
+    }
+
+    Node* root = NULL;
+
+    for (int i = 0; i < total; i++)
+        root = insert(root, i, st[i].marks[s]);
+
+    cout << "\n" << sub[s]
+         << " Marks in Descending Order\n";
+
+    displayDescending(root);
+    deleteTree(root);
+}
+
+// Display all subjects
+void showAllSubjects() {
+    if (total == 0) {
+        cout << "Please add student records first!\n";
+        return;
+    }
+
+    for (int i = 0; i < S; i++)
+        showSubject(i);
+}
+
+int main() {
     int ch;
+
     do {
-        cout << "\\n===== MENU =====\\n";
-        for (int i = 0; i < S; i++)
-            cout << i + 1 << ". Display " << sub[i] << "\\n";
-        cout << "8. Display All Subjects\\n";
-        cout << "9. Exit\\n";
+        cout << "\n===== STUDENT MARKS MANAGEMENT SYSTEM =====\n";
+        cout << "1. Add Student Record\n";
+        cout << "2. Display MSS Marks\n";
+        cout << "3. Display DS Marks\n";
+        cout << "4. Display DC Marks\n";
+        cout << "5. Display ELM Marks\n";
+        cout << "6. Display BA Marks\n";
+        cout << "7. Display PMF Marks\n";
+        cout << "8. Display CEP Marks\n";
+        cout << "9. Display All Subjects\n";
+        cout << "10. Exit\n";
         cout << "Enter your choice: ";
         cin >> ch;
 
-        if (ch >= 1 && ch <= 7) {
-            showSubject(ch - 1);
-        } else if (ch == 8) {
-            for (int i = 0; i < S; i++)
-                showSubject(i);
-        } else if (ch == 9) {
-            cout << "Program ended.\\n";
-        } else {
-            cout << "Invalid choice!\\n";
+        switch (ch) {
+            case 1:
+                addStudent();
+                break;
+            case 2:
+                showSubject(0);
+                break;
+            case 3:
+                showSubject(1);
+                break;
+            case 4:
+                showSubject(2);
+                break;
+            case 5:
+                showSubject(3);
+                break;
+            case 6:
+                showSubject(4);
+                break;
+            case 7:
+                showSubject(5);
+                break;
+            case 8:
+                showSubject(6);
+                break;
+            case 9:
+                showAllSubjects();
+                break;
+            case 10:
+                cout << "Program ended successfully!\n";
+                break;
+            default:
+                cout << "Invalid choice! Try again.\n";
         }
-    } while (ch != 9);
+
+    } while (ch != 10);
 
     return 0;
 }
