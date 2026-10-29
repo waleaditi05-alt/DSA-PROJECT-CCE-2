@@ -1,33 +1,65 @@
-# Ambulance Shortest Route using Dijkstra's Algorithm
+Ambulance Shortest Route using Dijkstra's Algorithm
 
-C++98-compatible Dev-C++ version. This implementation uses the simple `O(V^2 + E)` form of Dijkstra's algorithm to avoid modern C++ library features.
+Problem Statement
 
-## Run
-Open `main.cpp` in Dev-C++ and select **Execute > Compile & Run**.
+To develop a weighted road network representing hospitals and road junctions, and apply Dijkstra's Algorithm to determine the shortest-distance route for an ambulance to reach a hospital.
 
-## Sample input
-```text
-6
-J1
-J2
-J3
-J4
-J5
-HospitalA
-8
-J1 J2 4
-J1 J3 2
-J2 J3 1
-J2 J4 5
-J3 J4 8
-J3 J5 10
-J4 HospitalA 2
-J5 HospitalA 3
-J1
-HospitalA
-```
+Objective
 
-Expected shortest route: `J1 -> J3 -> J2 -> J4 -> HospitalA` with distance `10` units. Distances are illustrative.
+To implement Dijkstra's Algorithm in C++ to find the shortest route from the ambulance's starting location to the destination hospital.
 
-## Complexity
-Time: `O(V^2 + E)`. Space: `O(V + E)`.
+Data Structure Used
+
+- Graph
+- Adjacency List
+- Vector
+
+Operations
+
+- Enter the number of locations.
+- Enter unique names of locations.
+- Enter roads with their distances.
+- Select the ambulance's starting location.
+- Enter the destination hospital.
+- Calculate the shortest route.
+- Display the shortest route and total distance.
+- Display a message if no route exists.
+
+Concepts Used
+
+- C++
+- Graph
+- Dijkstra's Algorithm
+- Weighted Graph
+- Adjacency List
+- Vectors
+- Structures
+- Shortest Path
+- Greedy Algorithm
+
+Algorithm
+
+1. Start the program.
+2. Enter the number of locations and their unique names.
+3. Enter the number of roads and the distance between connected locations.
+4. Create a weighted graph using an adjacency list.
+5. Enter the ambulance's starting location and destination hospital.
+6. Initialize the distance of the starting location to zero and all other locations to infinity.
+7. Select the unvisited location with the minimum distance.
+8. Update the distances of its connected locations if a shorter route is found.
+9. Repeat until the destination is reached or no reachable locations remain.
+10. Reconstruct and display the shortest route using parent locations.
+11. Display the total distance or a message if no route exists.
+12. Stop the program.
+
+Advantages
+
+- Finds the shortest-distance route to a hospital.
+- Helps in planning ambulance routes.
+- Supports weighted roads with different distances.
+- Displays the complete route and total distance.
+- Detects when no route is available between two locations.
+
+Conclusion
+
+The Ambulance Shortest Route System demonstrates the implementation of Dijkstra's Algorithm using a weighted graph in C++. It finds the shortest-distance route from an ambulance's starting location to a destination hospital and displays the total distance. This project helps in understanding graphs, adjacency lists, greedy algorithms, and shortest-path techniques.
